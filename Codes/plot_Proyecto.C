@@ -109,5 +109,5 @@ leg->Draw();
 c1->Update();
 
 c1->Draw();
-c1->Print("plots/Plot_DeltaM.png");
+c1->Print("../plots/Plot_DeltaM.png");
 }
