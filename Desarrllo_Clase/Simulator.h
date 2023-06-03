@@ -41,17 +41,17 @@ class Simulator{
 
     private: /*Atributos*/
 
-    RooAbsPdf *Model; // Modelo que pasa el usuario
+    RooAbsPdf Model; // Modelo que pasa el usuario
     RooRealVar Obs; //Observale asociado al modelo
 
-    RooDataSet *Sintetic_Data; //Datos sinteticos 
+    RooDataSet Sintetic_Data; //Datos sinteticos 
     int Num_Data = 10000; //numero de datos generados sinteticamente
     int H = 800 , W = 600; //ancho del canvas
-    RooFitResult *FitResult; //resultado del fit
+    RooFitResult FitResult; //resultado del fit
 
     public:
 
-    Simulator(RooAbsPdf *_Model , RooRealVar *_Obs){  //Constructor
+    Simulator(RooAbsPdf _Model , RooRealVar _Obs){  //Constructor
 
     this -> Model = _Model;
     this -> Obs = _Obs;
@@ -61,15 +61,10 @@ class Simulator{
     /*Metodos-----------------------------------------------------------------------------------------------------*/
     Generate(){
     
-    RooDataSet Sintetic_Data = Model -> generate(Obs,Num_Data);
+    RooDataSet Sintetic_Data = Model.generate(Obs,Num_Data);
     }
 
-    ~Simulator(){
-        delete Model;
-        delete Sintetic_Data;
-        delete FitResult:
-        
-    }//Destructor
+    ~Simulator(){}//Destructor
 };
 
 
