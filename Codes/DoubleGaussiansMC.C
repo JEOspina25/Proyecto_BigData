@@ -42,15 +42,15 @@ TCanvas* CreateCanvas(TString cname, RooFitResult* result, RooDataSet* data, Roo
     Double_t nbin = ((supM-infM)/0.005)+1;
 
     int H = 500;
-    int W = 600;
+    int W = 650;
 
     // Creando Canvas
     TCanvas *c1 = new TCanvas(cname,cname,500,50,W,H);
     c1->cd() ;  
-    c1->SetLeftMargin(0.11);
+    c1->SetLeftMargin(0.12);
     c1->SetRightMargin(0.01);
     c1->SetTopMargin(0.05);
-    c1->SetBottomMargin(0.1);
+    c1->SetBottomMargin(0.11);
 
     // Creando frame
     RooPlot* Mframe = M.frame(infM,supM,nbin);
@@ -68,15 +68,15 @@ TCanvas* CreateCanvas(TString cname, RooFitResult* result, RooDataSet* data, Roo
     Mframe->SetYTitle("Events / 4 MeV"); 
     Mframe->SetLabelSize(0.05,"XY");
     Mframe->SetTitleSize(0.05,"XY");
-    Mframe->GetYaxis()->CenterTitle();   
-    Mframe->GetXaxis()->CenterTitle();
+    //Mframe->GetYaxis()->CenterTitle();   
+    //Mframe->GetXaxis()->CenterTitle();
     Mframe->GetYaxis()->SetNdivisions(505,1);
-    Mframe->GetXaxis()->SetNdivisions(505,1);
-    Mframe->GetXaxis()->SetTickLength(0.01);    
+    Mframe->GetXaxis()->SetNdivisions(1005,1);
+    Mframe->GetXaxis()->SetTickLength(0.02);    
     Mframe->GetXaxis()->SetDecimals(1); 
-    Mframe->SetTitleOffset(0.85,"X");
-    Mframe->SetTitleOffset(1.1,"Y");
-    // Mframe->SetMinimum(0.5); 
+    Mframe->SetTitleOffset(0.9,"X");
+    Mframe->SetTitleOffset(1.3,"Y");
+    Mframe->SetMaximum(2500); 
     Mframe->Draw();
     
     // Legend 1
@@ -85,14 +85,14 @@ TCanvas* CreateCanvas(TString cname, RooFitResult* result, RooDataSet* data, Roo
     Legend1->SetFillColor(0);
     Legend1->SetBorderSize(0);
     Legend1->SetFillStyle(0);
-    Legend1->AddEntry("", "29 nb^{-1}(13 Tev)","");
+    //Legend1->AddEntry("", "29 nb^{-1}(13 Tev)","");
     Legend1->AddEntry(Mframe->findObject("Data")," Data","ep"); 
     Legend1->AddEntry(Mframe->findObject("fittotal")," Fit result","l");
-    Legend1->AddEntry(Mframe->findObject("bkg"),"Comb. backg.","l");
+    Legend1->AddEntry(Mframe->findObject("bkg"),"Combinatorial background","l");
     Legend1->Draw();
 
-    TLegend *Legend2 = new TLegend(0.65,0.8,0.85,0.9);
-    Legend2->AddEntry("", "16 < p_{T} < 24 Gev, |#eta| < 2.1","");
+    TLegend *Legend2 = new TLegend(0.6,0.84,0.8,0.95);
+    Legend2->AddEntry("", "5 < p_{T} < 6 Gev, |#eta| < 2.1","");
     Legend2->SetBorderSize(0);
     Legend2->SetTextSize(0.04);
     Legend2->SetFillStyle(0);
@@ -124,11 +124,11 @@ int DoubleGaussiansMC(){
     RooRealVar mean("mean"," Mass mean",1.875,1.85,1.9,"GeV");
 
     // Gausiana 1
-    RooRealVar width("width"," Mass width",0.02,0.001,0.025,"GeV"); // Sigma1
+    RooRealVar width("width"," Mass width",0.008,0.0001,0.018,"GeV"); // Sigma1
     RooGaussian Sig("Sig"," Signal PDF",M,mean,width);
 
     // Gausiana 2
-    RooRealVar width2("width2"," Mass width2 ",0.025,0.001,0.05,"GeV"); // Sigma2
+    RooRealVar width2("width2"," Mass width2 ",0.08,0.0001,0.1,"GeV"); // Sigma2
     RooGaussian Sig2("Sig2"," Signal PDF B",M,mean,width2);
 
     // -Parámetros Background-
@@ -138,7 +138,7 @@ int DoubleGaussiansMC(){
 
     // Cantidad de datos por cada componente
     RooRealVar Ns("Ns","Ns",0.,500);
-    RooRealVar Nb("Nb","Nb",1500.,2000);   
+    RooRealVar Nb("Nb","Nb",1500.,20000);   
     RooRealVar fs("fs","fs",0.8,0.,1.);
 
     // Suma de las dos gausianas
@@ -148,7 +148,7 @@ int DoubleGaussiansMC(){
     RooAddPdf MassModel("MassModel","MassModel",RooArgList(Sumgaus,Bkg),RooArgList(Ns,Nb));
 
     // Generación
-    RooDataSet* Data_M = MassModel.generate(M,40000);
+    RooDataSet* Data_M = MassModel.generate(M,70000);
 
     // ---- Fitting ----
     RooFitResult* ResultFit = MassModel.fitTo(*Data_M,Extended(),Minos(kFALSE),Save(kTRUE));
