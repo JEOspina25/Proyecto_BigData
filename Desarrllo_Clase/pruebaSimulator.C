@@ -9,8 +9,8 @@
     /*Crear un Modelo--------------------------------------------------------------------------------------------------*/
     RooRealVar Mass("Mass", "Mass", 6.05, 6.5);
 
-    RooRealVar Mean("Mean", "Mean",  6.05, 6.5);
-    RooRealVar Sigma("Sigma", "Sigma", 0.00001, 1);
+    RooRealVar Mean("Mean", "Mean", 6.2703 ,6.05, 6.5);
+    RooRealVar Sigma("Sigma", "Sigma", .01,0.00001, 1);
     RooGaussian Signal("Signal", "Signal", Mass, Mean, Sigma);
 
     RooRealVar C("C", "C", -10, 10);
