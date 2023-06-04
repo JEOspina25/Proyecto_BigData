@@ -5,6 +5,7 @@
 #include "RooFit.h"
 #include "RooFitResult.h"
 #include "RooGlobalFunc.h"
+#include "RooAbsPdf.h"
 #include "RooArgusBG.h"
 #include "RooRealVar.h"
 #include "RooDataSet.h"
@@ -27,12 +28,13 @@
 #include "RooPlot.h"
 #include "RooHist.h"
 #include "RooNumIntConfig.h"
+#include "TObject.h"
 
-#ifndef __Simulator_H__
-#define __Simulator_H__
+#ifndef SIMULATOR_H 
+#define SIMULATOR_H
 
-using namespace RooFit;
-using namespace std;
+//using namespace RooFit;
+
 
   /*Esta clase recibe como input un modelo pdf con sus respectivos argumentos y genera a partir de ello
     1.) datos sinteticos
@@ -41,29 +43,24 @@ using namespace std;
     
     todo esto solo con findes educativos de formacion*/
 
-class Simulator : public TObject{
-	
- 
-    private: 
+class Simulator : public TObject {
+  
+  private:
+  RooDataSet   *DataSet;
+  RooFitResult *FitResult;
+  
+      
+  public:
+  Simulator(); // Default constructor
+  Simulator(RooAbsPdf & , RooRealVar const& );             
+      
 
-    RooAbsPdf Model;                                                // Modelo que pasa el usuario
-    RooRealVar Obs;                                                 //Observale asociado al modelo
-
-    RooDataSet *Sintetic_Data;                                       //Datos sinteticos 
-    int Num_Data = 10000;                                           //numero de datos generados sinteticamente
-    int H = 800 , W = 600;                                          //ancho del canvas
-    RooFitResult *FitResult;                                         //resultado del fit
-
-    public:
-
-    Simulator(RooAbsPdf _Model , RooRealVar _Obs);            
-    
-    /*Metodos-----------------------------------------------------------------------------------------------------*/
-    virtual void Generate();
-    virtual ~Simulator();
+ClassDef(Simulator, 1);
 };
 
-#endif // __Simulator_H__
+#endif
+
+
 
 
 
