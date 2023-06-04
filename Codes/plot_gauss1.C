@@ -9,10 +9,10 @@
 using namespace RooFit;
 using namespace std;
 
-void plot_Proyecto()
+void plot_gauss1()
 {
-Int_t bins = 38;
-Int_t datos = 800;
+Int_t bins = 45;
+Int_t datos = 1500;
 // S e t u p   m o d e l
 // ---------------------
 
@@ -22,7 +22,7 @@ RooRealVar mean("mean", "mean of gaussian", 0.1455, 0.14, 0.16);
 RooRealVar sigma("sigma", "width of gaussian", 0.0012, 0, 0.2);
 
 RooRealVar c("c","c",0);
-RooPolynomial bkg1("bkg1","Background",x,RooArgSet(c),0);
+RooPolynomial bkg1("bkg1","Background",x,RooArgSet(c),2);
 
 RooGaussian gauss("gauss", "gaussian PDF", x, mean, sigma);
 
@@ -37,29 +37,33 @@ RooAddPdf MassModel("MassModel","MassModel",RooArgList(gauss,bkg1),RooArgList(Ns
 // -----------------------------
 
 // Generate a dataset of 1000 events in x from gauss
-RooDataSet *data = gauss.generate(x, datos);
+RooDataSet *data = MassModel.generate(x, datos);
 
 
 // F i t   m o d e l   t o   d a t a
 // -----------------------------
 
 // Fit pdf to data
-MassModel.fitTo(*data,Extended(),Minos(kFALSE),Save(kTRUE), NumCPU(4));
+RooFitResult* fitres = MassModel.fitTo(*data,Extended(),Minos(kFALSE),Save(kTRUE), NumCPU(4));
+RooPlot *xframe2 = x.frame();
 
+fitres->Print("v");
+data->plotOn(xframe2,Name("data"), MarkerSize(1 ),MarkerStyle(8), DrawOption("P"),Binning(bins),DataError(RooAbsData::SumW2),XErrorSize(0));
+MassModel.plotOn(xframe2,LineColor(kBlue),LineWidth(2),Name("fit"));
+//MassModel.plotOn(xframe2,Components(gauss),LineColor(kBlue+1),LineWidth(3),Name("signal")); 
+MassModel.plotOn(xframe2,Components(bkg1),LineColor(kBlue),LineWidth(4), LineStyle(kDashed) ,Name("bkg1")); 
 
-//mean.Print();
-//sigma.Print();
+//Pull
+RooPlot* Mframe = x.frame(0.14,0.16,((0.16-0.14)/0.0008)+1);
+data->plotOn(Mframe,DataError(RooAbsData::SumW2),MarkerSize(1.0),XErrorSize(0));
+MassModel.plotOn(Mframe,DrawOption("F"),FillColor(0),LineWidth(2),Name("fittotal"));
+RooHist* hpullm2 = Mframe->pullHist() ;
+
 
 // Draw frame on a canvas
 // -----------------------------
-TCanvas *c1 = new TCanvas("c1","",600,500);
-
-RooPlot *xframe2 = x.frame();
-data->plotOn(xframe2,Name("data"), MarkerSize(1 ),MarkerStyle(8), DrawOption("P"),Binning(bins),DataError(RooAbsData::SumW2),XErrorSize(0));
-//MassModel.plotOn(xframe2,LineColor(kBlue),LineWidth(2),Name("fit"));
-MassModel.plotOn(xframe2,Components(gauss),LineColor(kBlue+1),LineWidth(3),Name("signal")); 
-MassModel.plotOn(xframe2,Components(bkg1),LineColor(kBlue),LineWidth(4), LineStyle(kDashed) ,Name("bkg1")); 
-
+//Lienzo para las gráficas
+TCanvas *c1 = new TCanvas("rf102_dataimport", "rf102_dataimport",50,50,1200,800 );
 
 xframe2->GetXaxis()->SetNdivisions(6);
 xframe2->SetMinimum(-1); 
@@ -93,8 +97,6 @@ legend2->SetMargin(0.1);
 legend2->Draw();
 
 
-
-
 //Leyenda: objetos de la figura
 TLegend *leg = new TLegend(0.4,0.49,0.83,0.71); 
 leg->SetTextSize(0.04);
@@ -105,9 +107,36 @@ leg->AddEntry(xframe2->findObject("data")," Data","ep");
 leg->AddEntry(xframe2->findObject("signal")," Fit ","l");
 leg->AddEntry(xframe2->findObject("bkg1"),"combinatorial background","l");
 leg->Draw();
-//Se almacena el lianzo en la carpeta plots
-c1->Update();
+
+
+
+
+
+
+
+
 
 c1->Draw();
 c1->Print("../plots/Plot_DeltaM.png");
+
+
+
+TCanvas *c2 = new TCanvas("rf102_dataimport", "rf102_dataimport",50,50,1200,800 );
+RooPlot* framem2 = x.frame(Title(" ")) ;
+framem2->SetYTitle(" (Data-Fit)/#sigma");
+framem2->addPlotable(hpullm2,"P") ;
+framem2->GetXaxis()->CenterTitle();
+framem2->GetYaxis()->CenterTitle();
+framem2->SetXTitle("Pull #Delta M"); 
+framem2->GetYaxis()->SetNdivisions(505,1);
+framem2->GetXaxis()->SetNdivisions(505,1);
+framem2->GetXaxis()->SetTickLength(0.07);   
+framem2->SetTitleOffset(0.35,"Y");
+framem2->SetTitleSize(0.04,"Y");
+framem2->SetLabelSize(0.04,"XY");
+framem2->SetTitleSize(0.04,"X");
+framem2->Draw();
+
+c2->Draw();
+c2->Print("../plots/Pull_DeltaM.png");
 }
