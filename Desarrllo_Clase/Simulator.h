@@ -28,46 +28,42 @@
 #include "RooHist.h"
 #include "RooNumIntConfig.h"
 
+#ifndef __Simulator_H__
+#define __Simulator_H__
+
 using namespace RooFit;
 using namespace std;
 
-class Simulator{
-    /*Esta clase recibe como input un modelo pdf con sus respectivos argumentos y genera a partir de ello
+  /*Esta clase recibe como input un modelo pdf con sus respectivos argumentos y genera a partir de ello
     1.) datos sinteticos
     2.) un fit a esos datos sinteticos
     3.) un pull y montecarlo de dichos datos
     
     todo esto solo con findes educativos de formacion*/
 
-    private: /*Atributos*/
+class Simulator : public TObject{
+	
+ 
+    private: 
 
-    RooAbsPdf Model; // Modelo que pasa el usuario
-    RooRealVar Obs; //Observale asociado al modelo
+    RooAbsPdf Model;                                                // Modelo que pasa el usuario
+    RooRealVar Obs;                                                 //Observale asociado al modelo
 
-    RooDataSet Sintetic_Data; //Datos sinteticos 
-    int Num_Data = 10000; //numero de datos generados sinteticamente
-    int H = 800 , W = 600; //ancho del canvas
-    RooFitResult FitResult; //resultado del fit
+    RooDataSet *Sintetic_Data;                                       //Datos sinteticos 
+    int Num_Data = 10000;                                           //numero de datos generados sinteticamente
+    int H = 800 , W = 600;                                          //ancho del canvas
+    RooFitResult *FitResult;                                         //resultado del fit
 
     public:
 
-    Simulator(RooAbsPdf _Model , RooRealVar _Obs){  //Constructor
-
-    this -> Model = _Model;
-    this -> Obs = _Obs;
-
-    }
-
-    /*Metodos-----------------------------------------------------------------------------------------------------*/
-    Generate(){
+    Simulator(RooAbsPdf _Model , RooRealVar _Obs);            
     
-    RooDataSet Sintetic_Data = Model.generate(Obs,Num_Data);
-    }
-
-    ~Simulator(){}//Destructor
+    /*Metodos-----------------------------------------------------------------------------------------------------*/
+    virtual void Generate();
+    virtual ~Simulator();
 };
 
-
+#endif // __Simulator_H__
 
 
 

@@ -27,51 +27,18 @@
 #include "RooPlot.h"
 #include "RooHist.h"
 #include "RooNumIntConfig.h"
+#include "TObject.h"
+#include "Simulator.h"
 
 using namespace RooFit;
 using namespace std;
 
-class Simulator{
-    /*Esta clase recibe como input un modelo pdf con sus respectivos argumentos y genera a partir de ello
-    1.) datos sinteticos
-    2.) un fit a esos datos sinteticos
-    3.) un pull y montecarlo de dichos datos
+ClassImp(Simulator)
     
-    todo esto solo con findes educativos de formacion*/
+Simulator::Simulator(RooAbsPdf Model_ , RooRealVar Obs_){
+    this->Model = Model_ ; this->Obs = Obs_;
 
-    private: /*Atributos*/
-
-    RooAbsPdf *Model; // Modelo que pasa el usuario
-    RooRealVar Obs; //Observale asociado al modelo
-
-    RooDataSet *Sintetic_Data; //Datos sinteticos 
-    int Num_Data = 10000; //numero de datos generados sinteticamente
-    int H = 800 , W = 600; //ancho del canvas
-    RooFitResult *FitResult; //resultado del fit
-
-    public:
-
-    Simulator(RooAbsPdf *_Model , RooRealVar *_Obs){  //Constructor
-
-    this -> Model = _Model;
-    this -> Obs = _Obs;
-
-    }
-
-    /*Metodos-----------------------------------------------------------------------------------------------------*/
-    Generate(){
-    
-    RooDataSet Sintetic_Data = Model -> generate(Obs,Num_Data);
-    }
-
-    ~Simulator(){
-        delete Model;
-        delete Sintetic_Data;
-        delete FitResult:
-        
-    }//Destructor
-};
-
+}
 
 
 
