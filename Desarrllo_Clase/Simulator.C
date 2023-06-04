@@ -30,15 +30,18 @@
 #include "TObject.h"
 #include "Simulator.h"
 
-using namespace RooFit;
-using namespace std;
+//using namespace RooFit;
 
 ClassImp(Simulator)
-    
-Simulator::Simulator(RooAbsPdf Model_ , RooRealVar Obs_){
-    this->Model = Model_ ; this->Obs = Obs_;
 
-}
+/*Descripcion*/
+
+Simulator::Simulator() : TObject(){}
+Simulator::Simulator( RooAbsPdf & Model , RooRealVar const& Obs): TObject(){
+
+    this->DataSet = Model.generate(Obs , 10000);
+    this->FitResult = Model.fitTo(*DataSet , RooFit::Extended(true) , RooFit::Save(true));
+};
 
 
 
