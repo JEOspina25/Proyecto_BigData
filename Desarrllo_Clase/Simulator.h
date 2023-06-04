@@ -46,13 +46,18 @@
 class Simulator : public TObject {
   
   private:
+  int nbin;
+  RooRealVar   *Obs; /*todo esto hay que definirlo como puntero porque los objetos de root borraron el operador asignacion =*/
+  RooAbsPdf    *Model;
   RooDataSet   *DataSet;
   RooFitResult *FitResult;
+  
+  TCanvas* MainPlot(RooAbsPdf *Model ,RooDataSet *DataSet);
   
       
   public:
   Simulator(); // Default constructor
-  Simulator(RooAbsPdf & , RooRealVar const& );             
+  Simulator(RooAbsPdf &  , RooRealVar &  , int const&);             
       
 
 ClassDef(Simulator, 1);
