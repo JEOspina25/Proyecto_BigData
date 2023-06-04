@@ -102,18 +102,14 @@ int DoubleGaussiansMC(){
     Data_M->plotOn(Mframe,DataError(RooAbsData::SumW2),MarkerSize(1.0),XErrorSize(0));
     MassModel.plotOn(Mframe,DrawOption("F"),FillColor(0),LineWidth(2),Name("fittotal"));
 
+    // Histograma Pull
+    RooHist* hpullm2 = Mframe->pullHist() ;
+
     // Dibujar el frame
     MassModel.plotOn(Mframe,Components(Bkg),LineColor(kBlue),LineWidth(2),LineStyle(kDashed),Name("bkg")); 
     Data_M->plotOn(Mframe,DataError(RooAbsData::SumW2),MarkerSize(1.0),XErrorSize(0),Name("Data"));
     MassModel.plotOn(Mframe);
     Mframe->SetTitle(""); 
-
-    // Histograma Pull
-    RooPlot* Pullframe = M.frame(0.14,0.16,((0.16-0.14)/0.0008)+1);
-    Data_M->plotOn(Pullframe,DataError(RooAbsData::SumW2*10),MarkerSize(1.0),XErrorSize(0));
-    MassModel.plotOn(Pullframe,DrawOption("F"),FillColor(0),LineWidth(2),Name("fittotal"));
-    RooHist* hpullm2 = Pullframe->pullHist() ;
-
 
     // Ajustes del frame
     Mframe->SetYTitle("Events / 4 MeV"); 
@@ -123,7 +119,7 @@ int DoubleGaussiansMC(){
     // Mframe->GetXaxis()->CenterTitle();
     Mframe->GetYaxis()->SetRangeUser(0, 2500);   
     Mframe->GetYaxis()->SetNdivisions(505,1);
-    Mframe->GetXaxis()->SetNdivisions(509,1);
+    Mframe->GetXaxis()->SetNdivisions(1005,1);
     Mframe->GetXaxis()->SetTickLength(0.03);    
     Mframe->GetXaxis()->SetDecimals(1); 
     Mframe->SetTitleOffset(0.85,"X");
@@ -187,6 +183,14 @@ int DoubleGaussiansMC(){
     Mframe2->SetLabelSize(0.04,"XY");
     Mframe2->SetTitleSize(0.04,"X");
     Mframe2->Draw();
+
+
+    // Linea en cero
+    TLine *line1 = new TLine(infM,0.0,supM,0.0);
+    line1->SetLineColor(4);
+    line1->SetLineWidth(1);
+    line1->Draw();
+
 
     Canvas2->Update();
 
