@@ -41,11 +41,12 @@ Simulator::Simulator( RooAbsPdf& Model_ , RooRealVar & Obs_ , int const& nbin_):
     nbin = nbin_;
     this->Obs = &Obs_;
     this->Model = &Model_;
-    this->DataSet = Model->generate(*Obs , 10000); // Default constructor
+    this->DataSet = Model->generate(*Obs , 10000); 
     this->FitResult = Model->fitTo(*DataSet , RooFit::Extended(true) , RooFit::Save(true));
 }
 
-TCanvas* Simulator::MainPlot(RooAbsPdf *Model ,RooDataSet *DataSet){
+//TCanvas* Simulator::MainPlot(RooAbsPdf *Model ,RooDataSet *DataSet){
+  TCanvas* Simulator::MainPlot(){  
     int x = 800;
     int y = 600;
 

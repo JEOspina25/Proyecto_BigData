@@ -52,13 +52,12 @@ class Simulator : public TObject {
   RooDataSet   *DataSet;
   RooFitResult *FitResult;
   
-  TCanvas* MainPlot(RooAbsPdf *Model ,RooDataSet *DataSet);
-  
       
   public:
   Simulator(); // Default constructor
-  Simulator(RooAbsPdf &  , RooRealVar &  , int const&);             
-      
+  Simulator(RooAbsPdf &  , RooRealVar &  , int const&); 
+  //TCanvas* MainPlot(RooAbsPdf *Model ,RooDataSet *DataSet);            
+  TCanvas* MainPlot();    
 
 ClassDef(Simulator, 1);
 };
