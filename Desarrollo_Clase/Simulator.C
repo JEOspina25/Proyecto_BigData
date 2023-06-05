@@ -102,7 +102,7 @@ TCanvas* Simulator::McPlot(const RooArgSet & Par){
 
     RooMCStudy *MC = new RooMCStudy(*Model,*Obs, Binned(false), Silence(true), Extended(true), FitOptions(Save(true), PrintEvalErrors(0))); 
     //MC->generateAndFit(10000); //---- FIT DE 10 HORAS!!----
-    MC->generateAndFit(10); //---Fit "Rapido"---
+    MC->generateAndFit(1000); //---Fit "Rapido"---
 
     gStyle->SetOptStat(0);
     TCanvas *MC_canvas = new TCanvas("Estudio MC", "Estudio MC", x, y);
