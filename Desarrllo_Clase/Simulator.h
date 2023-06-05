@@ -57,6 +57,11 @@ class Simulator : public TObject {
   Simulator(RooAbsPdf &  , RooRealVar &  , int const&); 
   //TCanvas* MainPlot(RooAbsPdf *Model ,RooDataSet *DataSet);            
   TCanvas* MainPlot(); 
+  TCanvas* McPlot(const RooArgSet & ); 
+
+  ~Simulator();
+
+  
      
 
 ClassDef(Simulator, 1);

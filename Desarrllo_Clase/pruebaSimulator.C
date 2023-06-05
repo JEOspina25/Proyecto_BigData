@@ -23,5 +23,8 @@
     
 
     Simulator MySimulation(Model , Mass , 100);
+
     MySimulation.MainPlot()->Draw();
+    MySimulation.McPlot(RooArgSet(Mean,Sigma,Nsig,Nbkg))->Draw();
+
 }

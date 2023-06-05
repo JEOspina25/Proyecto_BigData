@@ -30,7 +30,10 @@
 #include "TObject.h"
 #include "Simulator.h"
 
-//using namespace RooFit;
+using namespace RooFit;
+
+int x = 800;
+int y = 600;
 
 ClassImp(Simulator) 
 
@@ -42,14 +45,11 @@ Simulator::Simulator( RooAbsPdf& Model_ , RooRealVar & Obs_ , int const& nbin_):
     this->Obs = &Obs_;
     this->Model = &Model_;
     this->DataSet = Model->generate(*Obs , 10000); 
-    this->FitResult = Model->fitTo(*DataSet , RooFit::Extended(true) , RooFit::Save(true));
+    this->FitResult = Model->fitTo(*DataSet , Extended(true) , Save(true));
 }
 
-//TCanvas* Simulator::MainPlot(RooAbsPdf *Model ,RooDataSet *DataSet){
-  TCanvas* Simulator::MainPlot(){  
-    int x = 800;
-    int y = 600;
-
+TCanvas* Simulator::MainPlot(){  
+   
     TCanvas *c = new TCanvas("c", "c", x, y);
     c->Divide(1, 2 , 0 ,0);
 
@@ -77,10 +77,9 @@ Simulator::Simulator( RooAbsPdf& Model_ , RooRealVar & Obs_ , int const& nbin_):
     pullFrame->GetXaxis()->SetTitleSize(0.07); 
     pullFrame->GetXaxis()->SetTitleOffset(0.9);
     pullFrame->GetXaxis()->SetLabelSize(0.045);
-
+    pullFrame->Draw("A");
     TLine* zeroLine = new TLine(6.05, 0, 6.5, 0);
     zeroLine->SetLineStyle(2);
-    pullFrame->Draw("A");
     zeroLine->Draw("same");
     c->Update();
 
@@ -88,7 +87,48 @@ Simulator::Simulator( RooAbsPdf& Model_ , RooRealVar & Obs_ , int const& nbin_):
 }
 
 
+TCanvas* Simulator::McPlot(const RooArgSet & Par){ 
 
+    int NumPar = Par.getSize();
+    TIterator* ParIter = Par.createIterator();
 
+    RooMCStudy *MC = new RooMCStudy(*Model,*Obs, Binned(false), Silence(true), Extended(true), FitOptions(Save(true), PrintEvalErrors(0))); 
+    //MC->generateAndFit(10000); //---- FIT DE 10 HORAS!!----
+    MC->generateAndFit(10); //---Fit "Rapido"---
+
+    gStyle->SetOptStat(0);
+    TCanvas *MC_canvas = new TCanvas("Estudio MC", "Estudio MC", x, y);
+    MC_canvas->Divide(NumPar , 2);
+
+    
+    auto var = ParIter->Next();
+    int i = 1;
+    while (var) {
+      
+      RooPlot *ParMeanFrame ;
+      RooPlot *ParMeanPullFrame ;
+
+      if (i > NumPar){break;} ;
+
+      ParMeanFrame = MC->plotParam(*(RooRealVar*)(var), Bins(nbin)); //desreferrenciar el puntero
+      ParMeanPullFrame = MC->plotPull(*(RooRealVar*)(var), Bins(nbin), FitGauss(true));
+
+      MC_canvas->cd(i); gPad->SetLeftMargin(0.1);
+      ParMeanFrame->GetYaxis()->SetTitleOffset(1.4);
+      ParMeanFrame->Draw();
+      MC_canvas->Update();
+
+      MC_canvas->cd(i+NumPar); gPad->SetLeftMargin(0.1);
+      ParMeanPullFrame->GetYaxis()->SetTitleOffset(1.4);
+      ParMeanPullFrame->Draw();
+      MC_canvas->Update();
+
+      var = ParIter->Next();
+
+    
+
+    } return MC_canvas;}
+
+Simulator::~Simulator(){}
 
 
