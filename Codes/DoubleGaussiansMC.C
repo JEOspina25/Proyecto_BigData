@@ -35,9 +35,11 @@ using namespace RooFit;
 
 int DoubleGaussiansMC(){
 
-    // Valores Límete para las variables
+    // Valores Límite para las variables
     Double_t Mmin = 1.8; 
     Double_t Mmax = 1.975;
+
+    // Numero de datos
     Int_t datos = 50000;
 
     // Variables a usar
@@ -61,10 +63,10 @@ int DoubleGaussiansMC(){
     RooRealVar c1("c1","c1",0.0,1.0);
     RooPolynomial Bkg("Bkg","Exp. Background",M,RooArgList(c0,c1),3);
 
-    // Cantidad de datos por cada componente
+    // CPesos de Background y señal
+    RooRealVar fs("fs","fs",10,0.,1.);
     RooRealVar Ns("Ns","Ns",0.,500);
     RooRealVar Nb("Nb","Nb",1500.,20000);   
-    RooRealVar fs("fs","fs",10,0.,1.);
 
     // Suma de las dos gausianas
     RooAddPdf Sumgaus("sumgau","sumgau",RooArgList(Sig,Sig2),RooArgList(fs));
@@ -72,25 +74,28 @@ int DoubleGaussiansMC(){
     // Modelo de masa (2 Gausianas + Exponencial)
     RooAddPdf MassModel("MassModel","MassModel",RooArgList(Sumgaus,Bkg),RooArgList(Ns,Nb));
 
-    // Generación
+    // ---- Generación de datos ----
     RooDataSet* Data_M = MassModel.generate(M,datos);
 
     // ---- Fitting ----
     RooFitResult* ResultFit = MassModel.fitTo(*Data_M,Extended(),Minos(kFALSE),Save(kTRUE));
 
-    // // Hacer Gráfica
+    // ---- Gráficas ----
     Double_t supM = Mmax;
     Double_t infM = Mmin;
 
     // Número de bines
     Double_t nbin = ((supM-infM)/0.006)+1;
 
+    // Tamaño del Canvas
     int H = 550;
     int W = 650;
 
     // Creando Canvas
     TCanvas *Canvas1 = new TCanvas("Canvas_MasaK","Canvas_MasaK",500,50,W,H);
-    Canvas1->cd() ;  
+    Canvas1->cd();
+
+    // Margenes del Canvas 
     Canvas1->SetLeftMargin(0.11);
     Canvas1->SetRightMargin(0.01);
     Canvas1->SetTopMargin(0.05);
@@ -115,8 +120,6 @@ int DoubleGaussiansMC(){
     Mframe->SetYTitle("Events / 4 MeV"); 
     Mframe->SetLabelSize(0.03,"XY");
     Mframe->SetTitleSize(0.045,"XY");
-    // Mframe->GetYaxis()->CenterTitle();   
-    // Mframe->GetXaxis()->CenterTitle();
     Mframe->GetYaxis()->SetRangeUser(0, 2500);   
     Mframe->GetYaxis()->SetNdivisions(505,1);
     Mframe->GetXaxis()->SetNdivisions(1005,1);
@@ -124,7 +127,6 @@ int DoubleGaussiansMC(){
     Mframe->GetXaxis()->SetDecimals(1); 
     Mframe->SetTitleOffset(0.85,"X");
     Mframe->SetTitleOffset(1.1,"Y");
-    // Mframe->SetMinimum(0.5); 
     Mframe->Draw();
 
     // Legend 1
@@ -138,6 +140,7 @@ int DoubleGaussiansMC(){
     Legend1->AddEntry(Mframe->findObject("bkg"),"Combinatorial background","l");
     Legend1->Draw();
 
+    // Texto adicional
     TLatex *tex2 = new TLatex(0.15,0.88,"CMS");
     tex2->SetNDC();
     tex2->SetTextFont(60);
@@ -145,7 +148,7 @@ int DoubleGaussiansMC(){
     tex2->SetLineWidth(2);
     tex2->Draw("L");
 
-
+    // Legend 2
     TLegend *Legend2 = new TLegend(0.3,0.85,0.85,0.9);
     Legend2->AddEntry("", "5 < p_{T} < 6 Gev, |#eta| < 2.1","");
     Legend2->SetBorderSize(0);
@@ -154,27 +157,31 @@ int DoubleGaussiansMC(){
     Legend2->SetMargin(0.1);
     Legend2->Draw();
 
+    // 
     Canvas1->Modified();
     gPad->Update();
     gPad->RedrawAxis();
     TLine l;
     l.DrawLine(gPad->GetUxmax(), gPad->GetUymax(), gPad->GetUxmax(), gPad->GetUymin());
     Canvas1->Update();
-    Canvas1->Print("../plots/Plot_Mass_K_2pi.png");
 
+    // Guardar Gráfica
+    Canvas1->Print("../plots/Plot_Mass_K_2pi.png");
 
     // Canvas del Pull
     TCanvas *Canvas2 = new TCanvas("Pull_Mass_Kpipi", "Pull_Mass_Kpipi",50,50,1200,800 );
 
     Canvas2->cd();
-    // Canvas2->Draw();
 
+    // Frame del Pull
     RooPlot* Mframe2 = M.frame(Title(" ")) ;
+
+    // Dibujar Pull
     Mframe2->addPlotable(hpullm2,"P") ;
+
+    // Ajustes del frame
     Mframe2->SetTitle("Pull K#pi#pi M"); 
     Mframe2->SetYTitle(" (Data-Fit)/#sigma");
-    // Mframe2->GetXaxis()->CenterTitle();
-    // Mframe2->GetYaxis()->CenterTitle();
     Mframe2->GetYaxis()->SetNdivisions(505,1);
     Mframe2->GetXaxis()->SetNdivisions(505,1);
     Mframe2->GetXaxis()->SetTickLength(0.07);   
@@ -184,17 +191,17 @@ int DoubleGaussiansMC(){
     Mframe2->SetTitleSize(0.04,"X");
     Mframe2->Draw();
 
-
     // Linea en cero
     TLine *line1 = new TLine(infM,0.0,supM,0.0);
     line1->SetLineColor(4);
     line1->SetLineWidth(1);
     line1->Draw();
 
-
     Canvas2->Update();
 
+    // Guardando Gráfica
     Canvas2->Print("../plots/Pull_K2pi.png");
+
     return 0;
 
 }
