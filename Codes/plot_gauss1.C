@@ -141,6 +141,12 @@ int plot_gauss1()
     framem2->SetTitleSize(0.04,"X");
     framem2->Draw();
 
+    // Linea en cero
+    TLine *line1 = new TLine(infM,0.0,supM,0.0);
+    line1->SetLineColor(4);
+    line1->SetLineWidth(1);
+    line1->Draw();
+
     c2->Draw();
     
     // Guardar la figura
