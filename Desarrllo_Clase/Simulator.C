@@ -108,7 +108,7 @@ TCanvas* Simulator::McPlot(const RooArgSet & Par){
       RooPlot *ParMeanFrame ;
       RooPlot *ParMeanPullFrame ;
 
-      if (i > NumPar){break;} ;
+      if (i>NumPar){std::cout<<"Pare en la iteracion "<<i<<endl;break;} ;
 
       ParMeanFrame = MC->plotParam(*(RooRealVar*)(var), Bins(nbin)); //desreferrenciar el puntero
       ParMeanPullFrame = MC->plotPull(*(RooRealVar*)(var), Bins(nbin), FitGauss(true));
@@ -124,8 +124,7 @@ TCanvas* Simulator::McPlot(const RooArgSet & Par){
       MC_canvas->Update();
 
       var = ParIter->Next();
-
-    
+      i += 1;
 
     } return MC_canvas;}
 
